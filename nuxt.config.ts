@@ -2,6 +2,6 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   plugins: [
-    { src: '~/plugins/apexcharts.client.js', mode: 'client' },
+    { src: '~/plugins/apexcharts.client.ts', mode: 'client' },
   ]
 })
