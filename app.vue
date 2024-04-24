@@ -1,4 +1,6 @@
 <script setup>
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 const perguntas = [
   {
     "idPergunta": 96,
@@ -23,37 +25,6 @@ const perguntas = [
         "textoOpcaoResposta": "Nenhum",
         "contagem": 11,
         "proporcao": 21.15
-      }
-    ]
-  },
-  {
-    "idPergunta": 145,
-    "textoPergunta": null,
-    "opcoesResposta": [
-      {
-        "textoOpcaoResposta": "Murais de comunicados",
-        "contagem": 0,
-        "proporcao": 0.00
-      },
-      {
-        "textoOpcaoResposta": "Buritis",
-        "contagem": 0,
-        "proporcao": 0.00
-      },
-      {
-        "textoOpcaoResposta": "Castelo",
-        "contagem": 0,
-        "proporcao": 0.00
-      },
-      {
-        "textoOpcaoResposta": "Contagem",
-        "contagem": 0,
-        "proporcao": 0.00
-      },
-      {
-        "textoOpcaoResposta": "Cidade Nova",
-        "contagem": 0,
-        "proporcao": 0.00
       }
     ]
   },
@@ -328,10 +299,82 @@ const perguntas = [
     ]
   }
 ]
+
+const exportPdf = () => {
+  const gridContainer = document.querySelector('.container');
+  html2canvas(gridContainer).then((canvas) => {
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = 210;
+    const pageHeight = 295;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+    pdf.setFontSize(20);
+    pdf.setTextColor(12, 52, 48); // Set color to #0C3430
+    pdf.text('Meatz Burger', 10, 10);
+    position += 15;
+    pdf.setFontSize(10);
+    pdf.setTextColor(0, 0, 0); // Reset color to black
+    pdf.text('Quantitativos e percentuais de respostas para cada pergunta de múltipla escolha na pesquisa:', 10, position);
+    position += 15;
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+    pdf.save('resultado_pesquisa.pdf');
+  });
+}
 </script>
 
 <template>
-  <div v-for="(pergunta, index) in perguntas" :key="index">
-    <Estatisticas :pergunta="pergunta"/>
+  <div class="header">
+      <h2 class="titulo">Quantitativos e percentuais de respostas para cada pergunta de múltipla escolha na pesquisa:</h2>
+      <button @click="exportPdf" class="export-button">Exportar resultado como PDF</button>
+    </div>
+  <div class="container">
+    <Estatisticas v-for="(pergunta, index) in perguntas" :key="index" :pergunta="pergunta"/>
   </div>
 </template>
+<style>
+.container {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); /* Define duas colunas com tamanho mínimo de 400px */
+  gap: 15px; /* Espaçamento entre os gráficos */
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.titulo {
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 20px;
+  line-height: 150.18%;
+}
+
+.export-button {
+  color: #FFF;
+  width: fit-content;
+  height: 40px;
+  background: #AA4C32;
+  border: 1px solid #FFF;
+  box-shadow: 6px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+}
+
+.export-button:hover {
+  cursor: pointer;
+  background: #FFF;
+  color: #AA4C32;
+}
+</style>
