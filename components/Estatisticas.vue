@@ -56,17 +56,8 @@ const chartOptions = {
         },
         tooltip: {
             enabled: true,
-        }
+        },
     },
-    // title: {
-    //     text: `${somaContagem} Respostas`,
-    //     style: {
-    //         colors: ["#666"]
-    //     }
-    // },
-    // subtitle: {
-    //     text: 'Proporção das Respostas'
-    // },
     yaxis: {
         axisBorder: {
             show: false
@@ -90,6 +81,9 @@ const chartOptions = {
             fontSize: '12px',
             colors: ["#304758"]
         }
+    },
+    legend: {
+        show: false,
     },
 };
 const series = [
@@ -136,6 +130,6 @@ const charts = [
 }
 .apexcharts-legend.apx-legend-position-bottom.apexcharts-align-center, 
 .apexcharts-legend.apx-legend-position-top.apexcharts-align-center {
-    display: none !important;
+    /* display: none !important; */
 }
 </style>
